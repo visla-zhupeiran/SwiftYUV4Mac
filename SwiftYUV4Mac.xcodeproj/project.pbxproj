@@ -12,6 +12,12 @@
 		CEB965CA2633071B005C8296 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEB965C92633071B005C8296 /* Assets.xcassets */; };
 		CEB965CD2633071B005C8296 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEB965CC2633071B005C8296 /* Preview Assets.xcassets */; };
 		CEB965D02633071B005C8296 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CEB965CE2633071B005C8296 /* Main.storyboard */; };
+		CEB965E326330793005C8296 /* AgoraMetalShader.metal in Sources */ = {isa = PBXBuildFile; fileRef = CEB965DA26330792005C8296 /* AgoraMetalShader.metal */; };
+		CEB965E426330793005C8296 /* AgoraMetalRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB965DB26330792005C8296 /* AgoraMetalRender.swift */; };
+		CEB965E526330793005C8296 /* ReadYuvFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEB965DC26330792005C8296 /* ReadYuvFile.mm */; };
+		CEB965E626330793005C8296 /* video.yuv in Resources */ = {isa = PBXBuildFile; fileRef = CEB965DF26330793005C8296 /* video.yuv */; };
+		CEB965E826330793005C8296 /* Shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = CEB965E126330793005C8296 /* Shader.metal */; };
+		CEB965E926330793005C8296 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB965E226330793005C8296 /* MainController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +29,14 @@
 		CEB965CF2633071B005C8296 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CEB965D12633071B005C8296 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CEB965D22633071B005C8296 /* SwiftYUV4Mac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SwiftYUV4Mac.entitlements; sourceTree = "<group>"; };
+		CEB965D926330791005C8296 /* SwiftYUV4Mac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SwiftYUV4Mac-Bridging-Header.h"; sourceTree = "<group>"; };
+		CEB965DA26330792005C8296 /* AgoraMetalShader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = AgoraMetalShader.metal; sourceTree = "<group>"; };
+		CEB965DB26330792005C8296 /* AgoraMetalRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgoraMetalRender.swift; sourceTree = "<group>"; };
+		CEB965DC26330792005C8296 /* ReadYuvFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReadYuvFile.mm; sourceTree = "<group>"; };
+		CEB965DE26330792005C8296 /* ReadYuvFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadYuvFile.h; sourceTree = "<group>"; };
+		CEB965DF26330793005C8296 /* video.yuv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = video.yuv; sourceTree = "<group>"; };
+		CEB965E126330793005C8296 /* Shader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shader.metal; sourceTree = "<group>"; };
+		CEB965E226330793005C8296 /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -55,6 +69,13 @@
 		CEB965C42633071A005C8296 /* SwiftYUV4Mac */ = {
 			isa = PBXGroup;
 			children = (
+				CEB965DB26330792005C8296 /* AgoraMetalRender.swift */,
+				CEB965DA26330792005C8296 /* AgoraMetalShader.metal */,
+				CEB965E226330793005C8296 /* MainController.swift */,
+				CEB965DE26330792005C8296 /* ReadYuvFile.h */,
+				CEB965DC26330792005C8296 /* ReadYuvFile.mm */,
+				CEB965E126330793005C8296 /* Shader.metal */,
+				CEB965DF26330793005C8296 /* video.yuv */,
 				CEB965C52633071A005C8296 /* AppDelegate.swift */,
 				CEB965C72633071A005C8296 /* ContentView.swift */,
 				CEB965C92633071B005C8296 /* Assets.xcassets */,
@@ -62,6 +83,7 @@
 				CEB965D12633071B005C8296 /* Info.plist */,
 				CEB965D22633071B005C8296 /* SwiftYUV4Mac.entitlements */,
 				CEB965CB2633071B005C8296 /* Preview Content */,
+				CEB965D926330791005C8296 /* SwiftYUV4Mac-Bridging-Header.h */,
 			);
 			path = SwiftYUV4Mac;
 			sourceTree = "<group>";
@@ -105,6 +127,7 @@
 				TargetAttributes = {
 					CEB965C12633071A005C8296 = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
 					};
 				};
 			};
@@ -133,6 +156,7 @@
 			files = (
 				CEB965D02633071B005C8296 /* Main.storyboard in Resources */,
 				CEB965CD2633071B005C8296 /* Preview Assets.xcassets in Resources */,
+				CEB965E626330793005C8296 /* video.yuv in Resources */,
 				CEB965CA2633071B005C8296 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -144,8 +168,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CEB965E926330793005C8296 /* MainController.swift in Sources */,
 				CEB965C82633071A005C8296 /* ContentView.swift in Sources */,
 				CEB965C62633071A005C8296 /* AppDelegate.swift in Sources */,
+				CEB965E426330793005C8296 /* AgoraMetalRender.swift in Sources */,
+				CEB965E526330793005C8296 /* ReadYuvFile.mm in Sources */,
+				CEB965E826330793005C8296 /* Shader.metal in Sources */,
+				CEB965E326330793005C8296 /* AgoraMetalShader.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,6 +312,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SwiftYUV4Mac/SwiftYUV4Mac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -296,6 +326,8 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niap.SwiftYUV4Mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SwiftYUV4Mac/SwiftYUV4Mac-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
@@ -305,6 +337,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SwiftYUV4Mac/SwiftYUV4Mac.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -318,6 +351,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = com.niap.SwiftYUV4Mac;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SwiftYUV4Mac/SwiftYUV4Mac-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
