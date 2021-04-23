@@ -116,10 +116,13 @@ extension AgoraMetalRender {
             vertexBuffer = device?.makeBuffer(bytes: renderedCoordinates, length: byteLength, options: [.storageModeShared])
         }
         
-        if let yTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 0, pixelFormat: .r8Unorm),
-            let uvTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 1, pixelFormat: .rg8Unorm) {
-            self.textures = [yTexture, uvTexture]
-        }
+    
+    if let yTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 0, pixelFormat: .r8Unorm),
+       let uTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 1, pixelFormat: .r8Unorm) ,
+       let vTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 2, pixelFormat: .r8Unorm) {
+       self.textures = [yTexture, uTexture,vTexture]
+
+    }
     #endif
     }
 }
@@ -223,11 +226,15 @@ extension AgoraMetalRender: MTKViewDelegate {
         encoder.setRenderPipelineState(renderPipelineState)
         encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         
-        if let textureY = textures.first, let textureUV = textures.last {
-            encoder.setFragmentTexture(textureY, index: 0)
-            encoder.setFragmentTexture(textureUV, index: 1)
-            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+        
+        guard let textureY = self.textures?[0],
+              let textureU = self.textures?[1],
+              let textureV = self.textures?[2]  else{
+            return
         }
+        encoder.setFragmentTexture(textureY, index: 0)
+        encoder.setFragmentTexture(textureU, index: 1)
+        encoder.setFragmentTexture(textureV, index: 2)
         
         encoder.popDebugGroup()
         encoder.endEncoding()

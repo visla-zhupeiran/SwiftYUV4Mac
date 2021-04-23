@@ -16,7 +16,6 @@
 		CEB965E426330793005C8296 /* AgoraMetalRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB965DB26330792005C8296 /* AgoraMetalRender.swift */; };
 		CEB965E526330793005C8296 /* ReadYuvFile.mm in Sources */ = {isa = PBXBuildFile; fileRef = CEB965DC26330792005C8296 /* ReadYuvFile.mm */; };
 		CEB965E626330793005C8296 /* video.yuv in Resources */ = {isa = PBXBuildFile; fileRef = CEB965DF26330793005C8296 /* video.yuv */; };
-		CEB965E826330793005C8296 /* Shader.metal in Sources */ = {isa = PBXBuildFile; fileRef = CEB965E126330793005C8296 /* Shader.metal */; };
 		CEB965E926330793005C8296 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB965E226330793005C8296 /* MainController.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +34,6 @@
 		CEB965DC26330792005C8296 /* ReadYuvFile.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ReadYuvFile.mm; sourceTree = "<group>"; };
 		CEB965DE26330792005C8296 /* ReadYuvFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ReadYuvFile.h; sourceTree = "<group>"; };
 		CEB965DF26330793005C8296 /* video.yuv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = video.yuv; sourceTree = "<group>"; };
-		CEB965E126330793005C8296 /* Shader.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shader.metal; sourceTree = "<group>"; };
 		CEB965E226330793005C8296 /* MainController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,7 +72,6 @@
 				CEB965E226330793005C8296 /* MainController.swift */,
 				CEB965DE26330792005C8296 /* ReadYuvFile.h */,
 				CEB965DC26330792005C8296 /* ReadYuvFile.mm */,
-				CEB965E126330793005C8296 /* Shader.metal */,
 				CEB965DF26330793005C8296 /* video.yuv */,
 				CEB965C52633071A005C8296 /* AppDelegate.swift */,
 				CEB965C72633071A005C8296 /* ContentView.swift */,
@@ -173,7 +170,6 @@
 				CEB965C62633071A005C8296 /* AppDelegate.swift in Sources */,
 				CEB965E426330793005C8296 /* AgoraMetalRender.swift in Sources */,
 				CEB965E526330793005C8296 /* ReadYuvFile.mm in Sources */,
-				CEB965E826330793005C8296 /* Shader.metal in Sources */,
 				CEB965E326330793005C8296 /* AgoraMetalShader.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
