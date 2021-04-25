@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="UEH-fH-Foa">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="G7c-f0-lOc">
     <dependencies>
         <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="17701"/>
@@ -682,17 +682,17 @@
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
         <!--Main Controller-->
-        <scene sceneID="xUd-Mv-mfR">
+        <scene sceneID="1Kn-G5-VWd">
             <objects>
-                <viewController id="UEH-fH-Foa" customClass="MainController" customModule="SwiftYUV4Mac" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" id="bp9-Xz-fkG">
-                        <rect key="frame" x="0.0" y="0.0" width="450" height="300"/>
+                <viewController id="G7c-f0-lOc" customClass="MainController" customModule="SwiftYUV4Mac" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" id="LN6-gp-9u9">
+                        <rect key="frame" x="0.0" y="0.0" width="640" height="360"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </view>
                 </viewController>
-                <customObject id="idY-qa-MtE" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+                <customObject id="8Oc-os-qsf" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-69" y="255"/>
+            <point key="canvasLocation" x="73" y="209"/>
         </scene>
     </scenes>
 </document>

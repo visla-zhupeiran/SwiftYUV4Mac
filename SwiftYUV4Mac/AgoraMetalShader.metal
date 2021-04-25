@@ -33,9 +33,7 @@ vertex TextureMappingVertex mapTexture(unsigned int vertex_id [[ vertex_id ]],
 
 fragment float4 displayNV12Texture(TextureMappingVertex mappingVertex [[stage_in]],
                                    texture2d<float, access::sample> textureY [[ texture(0) ]],
-                                   texture2d<float, access::sample> textureU [[ texture(1) ]],
-                                   texture2d<float, access::sample> textureV [[ texture(2) ]]) {
-
+                                   texture2d<float, access::sample> textureUV [[ texture(1) ]]) {
     constexpr sampler colorSampler(mip_filter::linear,
                                    mag_filter::linear,
                                    min_filter::linear);
@@ -46,8 +44,6 @@ fragment float4 displayNV12Texture(TextureMappingVertex mappingVertex [[stage_in
                                                   float4(-0.7010f, +0.5291f, -0.8860f, +1.0000f));
     
     float4 ycbcr = float4(textureY.sample(colorSampler, mappingVertex.textureCoordinate).r,
-                          textureU.sample(colorSampler, mappingVertex.textureCoordinate).r,
-                          textureV.sample(colorSampler, mappingVertex.textureCoordinate).r,1.0);
-
+                          textureUV.sample(colorSampler, mappingVertex.textureCoordinate).rg, 1.0);
     return ycbcrToRGBTransform * ycbcr;
 }

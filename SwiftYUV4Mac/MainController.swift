@@ -9,22 +9,32 @@ import Foundation
 import Cocoa
 
 class MainController:NSViewController{
-    private lazy var uiimage:NSImageView = {
-        return NSImageView(frame: CGRect(x: 0, y: 100, width: 300 , height: 300))
+    private  var uiimage:NSImageView = {
+        return NSImageView(frame: CGRect(x: 0, y: 0, width: 640 , height: 360))
     }();
-    private lazy var renderingView: AgoraMetalRender = {
-        let rect = CGRect(x: 0, y: 0, width: 500, height: 303)
-        let view = AgoraMetalRender(frame: rect)
+    private  var renderingView: AgoraMetalRender = {
+        let rect = CGRect(x: 0, y: 0, width: 640 , height: 360)
+        let view = AgoraMetalRender()
         view.bounds = rect;
-        let _ = view.shouldInitialize()
+        view.shouldInitialize()
         view.shouldStart()
         return view
     }()
+    
+    private  var button:NSButton = {
+        return NSButton(frame: CGRect(x: 0, y: 360, width: 120 , height: 80))
+    }();
+    
     override func viewDidLoad() {
-        self.view.addSubview(renderingView)
+        view.addSubview(renderingView)
+        //view.addSubview(button)
+        button.title = "click"
+    }
+   
+    override func viewDidAppear() {
         let reader  = ReadYuvFile()
         reader.read(self)
-        self.view.addSubview(uiimage);
+        //self.view.addSubview(uiimage);
     }
     @objc public func render(pixcelBuffer:CVPixelBuffer) {
         renderingView.renderPixelBuffer(pixcelBuffer, rotation: .rotationNone)
