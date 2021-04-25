@@ -11,6 +11,11 @@ import Metal
 #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
     import MetalKit
 #endif
+//import AgoraRtcKit
+
+protocol AgoraMetalRenderMirrorDataSource: NSObjectProtocol {
+    func renderViewShouldMirror(renderView: AgoraMetalRender) -> Bool
+}
 
 enum AgoraVideoRotation: Int {
     case rotationNone = 0
@@ -19,13 +24,21 @@ enum AgoraVideoRotation: Int {
     case rotation270
 }
 
-protocol AgoraMetalRenderMirrorDataSource: NSObjectProtocol {
-    func renderViewShouldMirror(renderView: AgoraMetalRender) -> Bool
+enum AgoraVideoBufferType: Int {
+    case pixelBuffer = 1
+    case rawData = 2
+}
+
+enum AgoraVideoPixelFormat: Int {
+    case I420 = 1
+    case BGRA = 2
+    case NV12 = 8
 }
 
 class AgoraMetalRender: NSView {
     weak var mirrorDataSource: AgoraMetalRenderMirrorDataSource?
     
+    fileprivate var initialized: Bool = false
     fileprivate var textures: [MTLTexture]?
     fileprivate var vertexBuffer: MTLBuffer?
     fileprivate var viewSize = CGSize.zero
@@ -42,6 +55,7 @@ class AgoraMetalRender: NSView {
     
     init() {
         super.init(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+        viewSize = NSMakeSize(100, 100)
         initializeMetalView()
         initializeTextureCache()
     }
@@ -54,6 +68,7 @@ class AgoraMetalRender: NSView {
     
     override init(frame frameRect: CGRect) {
         super.init(frame: frameRect)
+        viewSize = frameRect.size
         initializeMetalView()
         initializeTextureCache()
     }
@@ -66,34 +81,6 @@ class AgoraMetalRender: NSView {
 }
 
 extension AgoraMetalRender {
-    func shouldInitialize() -> Bool {
-        initializeRenderPipelineState()
-        return true
-    }
-    
-    func shouldStart() {
-    #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
-        metalView.delegate = self
-    #endif
-    }
-    
-    func shouldStop() {
-    #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
-        metalView.delegate = nil
-    #endif
-    }
-    
-    func shouldDispose() {
-        _ = semaphore.wait(timeout: .distantFuture)
-        textures = nil
-        vertexBuffer = nil
-        #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
-        metalView.delegate = nil
-        #endif
-        semaphore.signal()
-    }
-
-    
     func renderPixelBuffer(_ pixelBuffer: CVPixelBuffer, rotation: AgoraVideoRotation) {
     #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
         guard CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly) == kCVReturnSuccess else {
@@ -102,14 +89,11 @@ extension AgoraMetalRender {
         defer {
             CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
         }
-        
         let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
         let width = isPlanar ? CVPixelBufferGetWidthOfPlane(pixelBuffer, 0) : CVPixelBufferGetWidth(pixelBuffer)
-        let height = isPlanar ? CVPixelBufferGetHeightOfPlane(pixelBuffer, 0) : CVPixelBufferGetHeight(pixelBuffer)
-        let size = CGSize(width: width, height: height)
-        
-        let mirror = mirrorDataSource?.renderViewShouldMirror(renderView: self) ?? false
-        if let renderedCoordinates = rotation.renderedCoordinates(mirror: mirror,
+            let height = isPlanar ? CVPixelBufferGetHeightOfPlane(pixelBuffer, 0) : CVPixelBufferGetHeight(pixelBuffer)
+            let size = CGSize(width: width, height: height)
+        if let renderedCoordinates = rotation.renderedCoordinates(mirror: false,
                                                                   videoSize: size,
                                                                   viewSize: viewSize) {
             let byteLength = 4 * MemoryLayout.size(ofValue: renderedCoordinates[0])
@@ -117,14 +101,16 @@ extension AgoraMetalRender {
         }
         
         if let yTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 0, pixelFormat: .r8Unorm),
-            let uvTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 1, pixelFormat: .rg8Unorm) {
-            self.textures = [yTexture, uvTexture]
+           let uTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 1, pixelFormat: .r8Unorm) ,
+           let vTexture = texture(pixelBuffer: pixelBuffer, textureCache: textureCache, planeIndex: 2, pixelFormat: .r8Unorm) {
+           self.textures = [yTexture, uTexture,vTexture]
+
         }
     #endif
     }
 }
 
-private extension AgoraMetalRender {
+extension AgoraMetalRender {
     func initializeMetalView() {
     #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
         metalView = MTKView(frame: bounds, device: device)
@@ -137,10 +123,14 @@ private extension AgoraMetalRender {
     }
     
     func initializeRenderPipelineState() {
-        guard let device = device, let library = device.makeDefaultLibrary() else {
+        guard !initialized else {
             return
         }
         
+        guard let device = device, let library = device.makeDefaultLibrary() else {
+            return
+        }
+        initialized = true
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.sampleCount = 1
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
@@ -150,6 +140,8 @@ private extension AgoraMetalRender {
         pipelineDescriptor.fragmentFunction = library.makeFunction(name: "displayNV12Texture")
         
         renderPipelineState = try? device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        
+       
     }
     
     func initializeTextureCache() {
@@ -187,6 +179,25 @@ private extension AgoraMetalRender {
         return texture
     }
 #endif
+    
+    func bindDelegate() {
+        metalView.delegate = self
+    }
+    
+    func unbindDelegate() {
+        metalView.delegate = nil
+    }
+    
+    func dispose() {
+        _ = semaphore.wait(timeout: .distantFuture)
+        textures = nil
+        initialized = false
+        vertexBuffer = nil
+        #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
+        metalView.delegate = nil
+        #endif
+        semaphore.signal()
+    }
 }
 
 #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
@@ -202,11 +213,11 @@ extension AgoraMetalRender: MTKViewDelegate {
     
         _ = semaphore.wait(timeout: .distantFuture)
         guard let textures = textures, let device = device,
-            let commandBuffer = commandQueue?.makeCommandBuffer(), let vertexBuffer = vertexBuffer else {
-                semaphore.signal()
-                return
+            let commandBuffer = commandQueue?.makeCommandBuffer(), let vertexBuffer = vertexBuffer  else {
+            _ = semaphore.signal()
+            return
         }
-
+        
         render(textures: textures, withCommandBuffer: commandBuffer, device: device, vertexBuffer: vertexBuffer)
     }
     
@@ -223,11 +234,11 @@ extension AgoraMetalRender: MTKViewDelegate {
         encoder.setRenderPipelineState(renderPipelineState)
         encoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
         
-        if let textureY = textures.first, let textureUV = textures.last {
-            encoder.setFragmentTexture(textureY, index: 0)
-            encoder.setFragmentTexture(textureUV, index: 1)
-            encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
-        }
+        encoder.setFragmentTexture(textures[0], index: 0)
+        encoder.setFragmentTexture(textures[1], index: 1)
+        encoder.setFragmentTexture(textures[2], index: 2)
+        encoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+
         
         encoder.popDebugGroup()
         encoder.endEncoding()
@@ -259,7 +270,7 @@ extension AgoraVideoRotation {
         
         let x: Float
         let y: Float
-        if widthAspito < heightAspito {
+        if widthAspito > heightAspito {
             x = 1
             y = heightAspito / widthAspito
         } else {
@@ -298,5 +309,86 @@ extension AgoraVideoRotation {
                 return [A, C, B, D]
             }
         }
+    }
+}
+
+
+class VMultiViewRender: NSObject {
+    private var renderViews: [AgoraMetalRender] = []
+    
+    func addRenderView(view: AgoraMetalRender) {
+        if renderViews.contains(view) {
+            return
+        }
+        renderViews.append(view)
+        view.initializeRenderPipelineState()
+        view.bindDelegate()
+        
+    }
+    
+    func removeRenderView(view: AgoraMetalRender) {
+        renderViews.removeAll { (renderView) -> Bool in
+            return renderView == view
+        }
+    }
+}
+
+protocol AgoraVideoSinkProtocol {
+    func shouldInitialize() -> Bool
+    func shouldStart()
+    func shouldStop()
+    func shouldDispose()
+    func bufferType() -> AgoraVideoBufferType
+    func pixelFormat() -> AgoraVideoPixelFormat
+    func renderPixelBuffer(_ pixelBuffer: CVPixelBuffer, rotation: AgoraVideoRotation)
+}
+
+extension VMultiViewRender: AgoraVideoSinkProtocol {
+    func shouldInitialize() -> Bool {
+        for renderView in renderViews {
+            renderView.initializeRenderPipelineState()
+        }
+        return true
+    }
+    
+    func shouldStart() {
+    #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
+        for renderView in renderViews {
+            renderView.bindDelegate()
+        }
+    #endif
+    }
+    
+    func shouldStop() {
+    #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
+        for renderView in renderViews {
+            renderView.unbindDelegate()
+        }
+    #endif
+    }
+    
+    func shouldDispose() {
+        for renderView in renderViews {
+            renderView.dispose()
+        }
+    }
+    
+    func bufferType() -> AgoraVideoBufferType {
+        return .pixelBuffer
+    }
+    
+    func pixelFormat() -> AgoraVideoPixelFormat {
+        return .NV12
+    }
+    
+    func renderPixelBuffer(_ pixelBuffer: CVPixelBuffer, rotation: AgoraVideoRotation) {
+    #if os(macOS) || (os(iOS) && (!arch(i386) && !arch(x86_64)))
+        for renderView in renderViews {
+            if renderView.metalView.delegate == nil {
+                renderView.bindDelegate()
+            }
+            renderView.renderPixelBuffer(pixelBuffer, rotation: rotation)
+        }
+    #endif
     }
 }

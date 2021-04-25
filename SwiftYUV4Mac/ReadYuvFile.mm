@@ -26,7 +26,7 @@
     CVReturn result = CVPixelBufferCreate(kCFAllocatorDefault,
                                           width,
                                           height,
-                                          kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange,
+                                          kCVPixelFormatType_420YpCbCr8Planar,
                                           (__bridge CFDictionaryRef)(pixelAttributes),
                                           &pixelBuffer);
     CVPixelBufferLockBaseAddress(pixelBuffer,0);
@@ -38,12 +38,12 @@
     fclose(fp1);
     const unsigned char *y_ch0 = yuv_data ;
     memcpy(yDestPlane, y_ch0, width*height);
-//    const uint8_t *y_ch1 = yuv_data + width * height;
-//    unsigned char *uDestPlane =(unsigned char*)CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1);
-//    memcpy(uDestPlane, y_ch1, width*height/4 );
-//    const uint8_t *y_ch2 = yuv_data + int(width * height * 1.25);
-//    unsigned char *vDestPlane =(unsigned char*)CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2);
-//    memcpy(vDestPlane, y_ch2, width*height/4 );
+    const uint8_t *y_ch1 = yuv_data + width * height;
+    unsigned char *uDestPlane =(unsigned char*)CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 1);
+    memcpy(uDestPlane, y_ch1, width*height/4 );
+    const uint8_t *y_ch2 = yuv_data + int(width * height * 1.25);
+    unsigned char *vDestPlane =(unsigned char*)CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, 2);
+    memcpy(vDestPlane, y_ch2, width*height/4 );
 //    const uint8_t *y_ch1 = yuv_data + width * height;
 //    const uint8_t *y_ch2 = yuv_data + int(width * height * 1.25);
 //    for(int i=0;i<height;i++){

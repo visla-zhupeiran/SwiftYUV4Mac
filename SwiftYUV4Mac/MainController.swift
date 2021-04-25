@@ -14,10 +14,10 @@ class MainController:NSViewController{
     }();
     private  var renderingView: AgoraMetalRender = {
         let rect = CGRect(x: 0, y: 0, width: 640 , height: 360)
-        let view = AgoraMetalRender()
-        view.bounds = rect;
-        view.shouldInitialize()
-        view.shouldStart()
+        let view = AgoraMetalRender(frame: rect)
+        //view.bounds = rect;
+        view.initializeRenderPipelineState()
+        view.bindDelegate()
         return view
     }()
     
